@@ -1,11 +1,12 @@
-import React from 'react'
+import React from 'react';
+import Paysage from './Paysage';
 
 function EcranJeu() {
   return (
-    <div className=' border-gris border min-h-128 rounded'>
-      
+    <div className='border border-gray-500 rounded w-full min-h-128 overflow-hidden'> {/* Assurez-vous que le div parent a aussi overflow-hidden */}
+      <Paysage/>
     </div>
-  )
+  );
 }
 
-export default EcranJeu
+export default EcranJeu;

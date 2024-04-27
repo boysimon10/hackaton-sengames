@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Essence from "../components/Essence";
 import Avatar from "../components/Avatar";
 import EcranJeu from "../components/EcranJeu";
+import Questionnaire from "../components/Questionnaire";
 
 function InterfaceGame() {
     const [essence, setEssence] = useState(3);
@@ -13,6 +14,7 @@ function InterfaceGame() {
                 <Avatar />
             </div>
             <EcranJeu/>
+            <Questionnaire/>
         </div>
     );
 }
