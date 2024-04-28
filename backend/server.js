@@ -2,7 +2,7 @@ const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
-const questions = require('./questions');
+let questions = require('./questions');
 
 const app = express();
 
@@ -18,6 +18,14 @@ const io = socketIo(server, {
 
 let players = [];
 let rooms = {};
+
+function shuffleQuestions() {
+    // Utiliser l'algorithme de Fisher-Yates pour mélanger les questions
+    for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
+}
 
 io.on('connection', (socket) => {
     console.log('New connection: ', socket.id);
@@ -51,6 +59,8 @@ io.on('connection', (socket) => {
         const roomPlayers = players.filter(player => player.room === room);
         if (roomPlayers.length === 2) {
             io.to(room).emit('startGame');
+            shuffleQuestions();
+            rooms[room].currentQuestionIndex = 0;
             sendQuestion(room);
         }
     }
@@ -58,10 +68,10 @@ io.on('connection', (socket) => {
     function sendQuestion(room) {
         const roomPlayers = players.filter(player => player.room === room);
         const currentQuestionIndex = rooms[room].currentQuestionIndex || 0;
-    
-        if (currentQuestionIndex < questions.length) {
+
+        if (currentQuestionIndex < 5) {
             const currentQuestion = questions[currentQuestionIndex];
-    
+
             io.to(room).emit('newQuestion', {
                 question: currentQuestion.question,
                 options: currentQuestion.options,
@@ -72,12 +82,12 @@ io.on('connection', (socket) => {
                     score: player.score
                 }))
             });
-    
+
             rooms[room].currentQuestionIndex = currentQuestionIndex + 1;
         } else {
             const player1Score = roomPlayers[0].score;
             const player2Score = roomPlayers[1].score;
-    
+
             if (player1Score === player2Score) {
                 io.to(room).emit('gameOver', "Match nul");
             } else {
@@ -85,17 +95,17 @@ io.on('connection', (socket) => {
                 io.to(room).emit('gameOver', winner.username);
             }
         }
-    }    
+    }
 
     socket.on('submitAnswer', (room, answerIndex) => {
         const currentPlayer = players.find(player => player.id === socket.id && player.room === room);
         const currentQuestionIndex = rooms[room].currentQuestionIndex - 1;
         const currentQuestion = questions[currentQuestionIndex];
         const roomPlayers = players.filter(player => player.room === room);
-    
-        if (!currentPlayer.answered && currentQuestionIndex < questions.length) {
+
+        if (!currentPlayer.answered && currentQuestionIndex < 5) {
             currentPlayer.answered = true;
-    
+
             if (answerIndex === currentQuestion.options.indexOf(currentQuestion.answer)) {
                 currentPlayer.score += 1;
             } else {
@@ -104,14 +114,14 @@ io.on('connection', (socket) => {
                     io.to(nextPlayer.id).emit('yourTurn');
                 }
             }
-    
+
             const allAnswered = roomPlayers.every(player => player.answered);
-            if (allAnswered || currentQuestionIndex >= questions.length - 1) {
+            if (allAnswered || currentQuestionIndex >= 4) {
                 sendQuestion(room);
                 roomPlayers.forEach(player => player.answered = false);
             }
         }
-    });    
+    });
 
     socket.on('restartGame', (room) => {
         const roomPlayers = players.filter(player => player.room === room);
