@@ -8,7 +8,7 @@ const Landscape = ({ start }) => {
         if (start) {
             const interval = setInterval(() => {
                 setPosition((prevPosition) => prevPosition + 1);
-            }, 50);
+            }, 75);
             return () => clearInterval(interval);
         }
 

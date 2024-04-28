@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-function Feu() {
+function Feu({setStart}) {
     const [countdown, setCountdown] = useState(3);
     const [hide, setHide] = useState(false);
 
@@ -9,6 +9,7 @@ function Feu() {
             if (countdown > 0) {
                 setCountdown(countdown - 1);
             } else {
+                setStart(true)
                 setTimeout(() => {
                     setHide(true);
                 }, 500); // 500 millisecondes de délai avant de réinitialiser le feu
