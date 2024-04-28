@@ -64,8 +64,18 @@ function Home() {
         }
     };
 
+    const handleRestartGame = () => {
+        socket.emit("restartGame", room);
+        setWinner("");
+    };
+
     if (winner) {
-        return <h1>Winner is {winner}</h1>;
+        return (
+            <div>
+                <h1>Winner is {winner}</h1>
+                <button onClick={handleRestartGame}>Rejouer</button>
+            </div>
+        );
     }
 
     return (
@@ -131,4 +141,4 @@ function Home() {
     );
 }
 
-export default Home; 
+export default Home;

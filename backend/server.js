@@ -58,10 +58,10 @@ io.on('connection', (socket) => {
     function sendQuestion(room) {
         const roomPlayers = players.filter(player => player.room === room);
         const currentQuestionIndex = rooms[room].currentQuestionIndex || 0;
-
+    
         if (currentQuestionIndex < questions.length) {
             const currentQuestion = questions[currentQuestionIndex];
-
+    
             io.to(room).emit('newQuestion', {
                 question: currentQuestion.question,
                 options: currentQuestion.options,
@@ -72,13 +72,20 @@ io.on('connection', (socket) => {
                     score: player.score
                 }))
             });
-
+    
             rooms[room].currentQuestionIndex = currentQuestionIndex + 1;
         } else {
-            const winner = roomPlayers.reduce((prev, current) => (prev.score > current.score) ? prev : current);
-            io.to(room).emit('gameOver', winner.username);
+            const player1Score = roomPlayers[0].score;
+            const player2Score = roomPlayers[1].score;
+    
+            if (player1Score === player2Score) {
+                io.to(room).emit('gameOver', "Match nul");
+            } else {
+                const winner = roomPlayers.reduce((prev, current) => (prev.score > current.score) ? prev : current);
+                io.to(room).emit('gameOver', winner.username);
+            }
         }
-    }
+    }    
 
     socket.on('submitAnswer', (room, answerIndex) => {
         const currentPlayer = players.find(player => player.id === socket.id && player.room === room);
@@ -92,8 +99,6 @@ io.on('connection', (socket) => {
             if (answerIndex === currentQuestion.options.indexOf(currentQuestion.answer)) {
                 currentPlayer.score += 1;
             } else {
-                // Remove the score decrement logic here
-                // currentPlayer.score -= 1;
                 const nextPlayer = roomPlayers.find(player => !player.answered);
                 if (nextPlayer) {
                     io.to(nextPlayer.id).emit('yourTurn');
@@ -107,6 +112,17 @@ io.on('connection', (socket) => {
             }
         }
     });    
+
+    socket.on('restartGame', (room) => {
+        const roomPlayers = players.filter(player => player.room === room);
+        roomPlayers.forEach(player => {
+            player.score = 0;
+            player.answered = false;
+        });
+
+        rooms[room].currentQuestionIndex = 0;
+        sendQuestion(room);
+    });
 
     socket.on('disconnect', () => {
         console.log('Disconnected: ', socket.id);
