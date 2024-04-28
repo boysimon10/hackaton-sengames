@@ -30,6 +30,11 @@ const Landscape = ({ start }) => {
                     alt="Landscape 2"
                     className="h-full w-full -ml-8"
                 />
+                <img
+                    src={process.env.PUBLIC_URL + "./images/paysage.png"}
+                    alt="Landscape 2"
+                    className="h-full w-full -ml-8"
+                />
             </div>
         </div>
     );

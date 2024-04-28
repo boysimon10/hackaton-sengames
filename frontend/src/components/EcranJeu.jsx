@@ -4,7 +4,7 @@ import Paysage from "./Paysage";
 function EcranJeu({ start, reponse1, reponse2 }) {
     const [positionUn, setPositionUn] = useState(0);
     const [positionDeux, setPositionDeux] = useState(0);
-    start = true;
+    start = false;
     useEffect(() => {
         if (start) {
             const interval = setInterval(() => {
