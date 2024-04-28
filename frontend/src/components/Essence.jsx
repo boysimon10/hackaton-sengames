@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BsFuelPump } from "react-icons/bs";
 
-function Essence({ essence }) {
+function Essence({ essence, start }) {
     const [progress, setProgress] = useState(100); // Initialiser la barre de progression à 100%
 
     // Mettre à jour la barre de progression à intervalles réguliers
@@ -16,15 +16,13 @@ function Essence({ essence }) {
 
     // Mettre à jour la barre de progression plus rapidement si le niveau d'essence change
     useEffect(() => {
-        let proportion = 0;
-        if (essence !== 0) {
-            proportion = (3 - essence) * 10; // Calculer la proportion de la réduction de progress
-        } else {
-            proportion = progress;
+        let progress =100;
+        const essenceProgress = () => {
+            progress = progress - 20;
         }
-        const newProgress = Math.max(0, progress - proportion); // Calculer le nouveau progress en fonction du niveau d'essence
-        setProgress(newProgress); // Mettre à jour la barre de progression
+        essenceProgress()
     }, [essence]);
+    
 
     return (
         <div className="flex items-center p-4">
@@ -38,7 +36,7 @@ function Essence({ essence }) {
                         : "bg-green-50 border-green-500 border"
                 }`}
             >
-                {progress !== 0 && (
+                {progress !== 0  && start &&(
                     <div
                         className="h-full bg-green-500 rounded-md"
                         style={{ width: `${progress}%` }}

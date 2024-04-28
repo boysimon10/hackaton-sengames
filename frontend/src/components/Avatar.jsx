@@ -19,13 +19,13 @@ function Avatar() {
                 <div className="border rounded-full p-2 ">
                     <FaUserAstronaut className="text-gris text-2xl " />
                 </div>
-                <div>{credit.pseudo}</div>
+                <div>{credit.name}</div>
             </div>
             <div className="flex items-center">
                 <div className="border rounded-full p-2 ">
                     <FaGamepad className="text-gris text-2xl " />
                 </div>
-                <div>#{credit.roomID}</div>
+                <div>#{credit.room}</div>
             </div>
         </div>
     );

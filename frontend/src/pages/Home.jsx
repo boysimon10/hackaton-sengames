@@ -1,35 +1,34 @@
 import React, { useEffect, useState } from "react";
-import Fade from "react-reveal/Fade";
-import { useNavigate } from "react-router-dom";
 
+function Home({ waiting, setWaiting, socket }) {
+    const [name, setName] = useState("");
+    const [room, setRoom] = useState("");
 
-
-function Home() {
-    const navigate = useNavigate();
-    const [pseudo, setPseudo] = useState("");
-    const [roomID, setRoomID] = useState("");
     const [roomIDGenerated, setRoomIDGenerated] = useState(false);
     const [roomIDInput, setRoomIDInput] = useState(false);
 
-    const handleStart = (e) => {
-        e.preventDefault();
-        // Stocker le pseudo dans le localStorage
-        localStorage.setItem("credit", JSON.stringify({
-            pseudo: pseudo,
-            roomID: roomID,
-        }));
-        navigate("/game");
+    const clearLocalStorage = () => {
+        localStorage.clear();
     };
-    
 
     const generateRandomRoomID = () => {
         if (roomIDInput) {
             const randomID = Math.floor(1000 + Math.random() * 9000);
-            setRoomID(randomID.toString());
+            setRoom(randomID.toString());
             setRoomIDGenerated(true);
         }
     };
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
+        if (name && room && !waiting) {
+            clearLocalStorage()
+            localStorage.setItem("credit", JSON.stringify({ name, room }));
+            
+            setWaiting(true);
+            socket.emit("joinRoom", room, name);
+        }
+    };
     const toggleRoomIDInput = () => {
         setRoomIDInput(!roomIDInput);
     };
@@ -42,23 +41,21 @@ function Home() {
         <section className="w-full h-screen grid grid-cols-1 lg:grid-cols-2">
             <div className="min-h-screen flex justify-center items-center">
                 <form
-                    onSubmit={handleStart}
+                    onSubmit={handleSubmit}
                     className="space-y-4 w-full lg:w-96"
                 >
                     <div className="w-full">
-                        <label
-                            htmlFor="pseudo"
-                            className="block font-bold mb-2"
-                        >
+                        <label htmlFor="name" className="block font-bold mb-2">
                             Pseudo
                         </label>
                         <input
                             type="text"
-                            id="pseudo"
-                            name="pseudo"
+                            id="name"
+                            name="name"
                             className="border border-bleu outline-none bg-transparent rounded-md w-full px-3 py-2"
-                            value={pseudo}
-                            onChange={(e) => setPseudo(e.target.value)}
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            readOnly={waiting}
                             required
                         />
                     </div>
@@ -90,18 +87,23 @@ function Home() {
                             id="RoomID"
                             name="RoomID"
                             className="border border-bleu outline-none bg-transparent rounded-md w-full px-3 py-2"
-                            value={roomID}
-                            onChange={(e) => setRoomID(e.target.value)}
-                            readOnly={roomIDInput}
+                            value={room}
+                            onChange={(e) => setRoom(e.target.value)}
+                            readOnly={waiting}
                             required={!roomIDInput}
                         />
                     </div>
                     <div className="w-full">
                         <button
                             type="submit"
-                            className="inline-block px-4 py-2 bg-bleu text-white font-bold rounded-md w-full"
+                            disabled={waiting}
+                            className={`inline-block px-4 py-2 bg-bleu text-white font-bold rounded-md w-full ${
+                                waiting ? "animate-pulse" : ""
+                            }`}
                         >
-                            Commencer
+                            {waiting
+                                ? "En attente d'un autre joueur..."
+                                : "Commencer"}
                         </button>
                     </div>
                 </form>
