@@ -1,5 +1,7 @@
 # Quizz Race 
-<h4 align="left">Team me (@boysimon10) and @asarre01</h4>
+**Team**: me ([@boysimon10](https://github.com/boysimon10)) and [@asarre01](https://github.com/asarre01)
+**Hackathon**: HackEdu Galsen by Sengames
+
 <h3 align="left">Languages and Tools:</h3>
 <p align="left"> <img src="https://socket.io/images/logo-dark.svg" alt="Socket.io" width="40" height="40"/> <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/ExpressJS-Dark.svg" alt="ExpressJS" width="40" height="40"/> <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/NodeJS-Dark.svg" alt="NodeJS" width="40" height="40"/> <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/React-Dark.svg" alt="React" width="40" height="40"/> <img src="https://github.com/tandpfun/skill-icons/blob/main/icons/TailwindCSS-Dark.svg" alt="TailwindCSS" width="40" height="40"/> </p>
 
